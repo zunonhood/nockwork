@@ -18,7 +18,7 @@ const manifest = {
 };
 
 test("stores and reloads a verified version without using ids as paths", async t => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), "nockwork-"));
+  const directory = await mkdtemp(path.join(os.tmpdir(), "shellwork-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const store = new ComponentStore(directory);
   await store.install(manifest, bytes);
@@ -28,7 +28,7 @@ test("stores and reloads a verified version without using ids as paths", async t
 });
 
 test("detects corruption in an installed artifact", async t => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), "nockwork-"));
+  const directory = await mkdtemp(path.join(os.tmpdir(), "shellwork-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const store = new ComponentStore(directory);
   await store.install(manifest, bytes);

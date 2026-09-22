@@ -19338,7 +19338,7 @@ var catalog = [
     wei: 0n,
     term: "PERPETUAL",
     developer: "0x41C0\u20263B99",
-    description: "A restrained keyboard-first shell for the Nockwork environment.",
+    description: "A restrained keyboard-first shell for the Shellwork environment.",
     permissions: ["storage:read"]
   },
   {
@@ -19356,14 +19356,17 @@ var catalog = [
   }
 ];
 var $ = (selector) => document.querySelector(selector);
+var stored = (key, fallback) => JSON.parse(
+  localStorage.getItem("shellwork-" + key) ?? localStorage.getItem("nockwork-" + key) ?? fallback
+);
 var state = {
   selected: catalog[0],
   filter: "All",
   search: "",
   account: null,
-  installed: JSON.parse(localStorage.getItem("nockwork-installed") ?? "[]"),
-  activity: JSON.parse(localStorage.getItem("nockwork-activity") ?? "[]"),
-  config: JSON.parse(localStorage.getItem("nockwork-config") ?? "{}")
+  installed: stored("installed", "[]"),
+  activity: stored("activity", "[]"),
+  config: stored("config", "{}")
 };
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -19413,8 +19416,8 @@ function renderInspector() {
   $("#inspectSource").onclick = () => setStatus(item.id);
 }
 function save() {
-  localStorage.setItem("nockwork-installed", JSON.stringify(state.installed));
-  localStorage.setItem("nockwork-activity", JSON.stringify(state.activity.slice(0, 50)));
+  localStorage.setItem("shellwork-installed", JSON.stringify(state.installed));
+  localStorage.setItem("shellwork-activity", JSON.stringify(state.activity.slice(0, 50)));
   $("#installedCount").textContent = state.installed.length;
 }
 function addActivity(action, item, status = "COMPLETE") {
@@ -19584,7 +19587,7 @@ $("#settingsForm").onsubmit = (event) => {
       registryAddress: registry ? getAddress(registry) : "",
       marketAddress: market ? getAddress(market) : ""
     };
-    localStorage.setItem("nockwork-config", JSON.stringify(state.config));
+    localStorage.setItem("shellwork-config", JSON.stringify(state.config));
     loadSettings();
     updateMode();
     setStatus(chainConfigured() ? "Chain configuration saved" : "Local demo mode enabled");

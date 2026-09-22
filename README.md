@@ -1,13 +1,13 @@
-# Nockwork
+# Shellwork
 
-Nockwork is an open-source experiment in building a computer system whose software components can be owned, licensed, transferred and settled through Robinhood Chain.
+Shellwork is an open-source experiment in building a computer system whose software components can be owned, licensed, transferred and settled through Robinhood Chain.
 
-The computer itself remains local-first: code executes on the user's device, while the chain records shared facts such as component publishers, code hashes, licenses, access expiry and payments. Nockwork is independent and is not an official Robinhood product.
+The computer itself remains local-first: code executes on the user's device, while the chain records shared facts such as component publishers, code hashes, licenses, access expiry and payments. Shellwork is independent and is not an official Robinhood product.
 
 ## Explore the project
 
 - [Project website and source browser](https://nockwork.xyz/)
-- [Open the Nockwork system](https://nockwork.xyz/system/)
+- [Open the Shellwork system](https://nockwork.xyz/system/)
 - [Developer documentation](repository-files/README.md)
 
 ## V1.1 includes

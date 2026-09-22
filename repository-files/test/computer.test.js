@@ -27,7 +27,7 @@ const manifest = {
 };
 
 test("downloads, installs, reloads, reauthorizes and launches a component", async t => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), "nockwork-e2e-"));
+  const directory = await mkdtemp(path.join(os.tmpdir(), "shellwork-e2e-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const licenses = new MemoryLicenseProvider();
   licenses.grant(owner, manifest.id);

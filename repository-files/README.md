@@ -1,4 +1,4 @@
-# Nockwork
+# Shellwork
 
 Version 1.1 is a working reference implementation of a local-first computer
 runtime whose component ownership and licensing can be settled on Robinhood
