@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Shellwork — a composable computer system built on Robinhood Chain.">
+  <meta name="description" content="Shellwork — a composable computer system built on Solana.">
   <title>Shellwork / Source</title>
   <link rel="icon" type="image/png" href="./shellwork-logo.png">
-  <link rel="stylesheet" href="./repository.css">
-  <link rel="stylesheet" href="./banner-color.css">
+  <link rel="stylesheet" href="./repository.css?v=shellwork-logo-2">
+  <link rel="stylesheet" href="./banner-color.css?v=shellwork-logo-2">
 </head>
 <body>
 <div class="ca-banner">
   <span class="banner-spacer" aria-hidden="true"></span>
-  <span aria-hidden="true"></span>
-  <a class="x-link" href="https://x.com/nockworkos" target="_blank" rel="noopener noreferrer" aria-label="Open Shellwork on X">
+  <div class="ca-value" aria-label="Contract address pending update"><span>CA</span><b>TO BE UPDATED</b></div>
+  <a class="x-link" href="https://x.com/shellworkos" target="_blank" rel="noopener noreferrer" aria-label="Open Shellwork on X">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
   </a>
 </div>
@@ -22,21 +22,21 @@
     <section class="explorer">
       <header class="repo-head">
         <span class="mark"><img src="./shellwork-logo.png" alt=""></span>
-        <div><small>SHELLWORK / ROBINHOOD CHAIN</small><h1>shellwork</h1></div>
+        <div><small>SHELLWORK / SOLANA</small><h1>shellwork</h1></div>
         <div class="repo-actions">
           <em>PUBLIC</em>
           <a class="download-source" href="https://github.com/zunonhood/nockwork/archive/refs/heads/main.zip" aria-label="Download the complete Shellwork source code as a ZIP file">DOWNLOAD SOURCE .ZIP</a>
-          <a class="open-system" href="./system/">OPEN SYSTEM V1</a>
+          <a class="open-system" href="./system/">OPEN SYSTEM V2</a>
         </div>
       </header>
-      <div class="repo-meta"><span><i></i>main</span><span>v1.1.0</span><span>31 source files</span></div>
+      <div class="repo-meta"><span><i></i>main</span><span>v2.0.0</span><span>Solana source</span></div>
       <nav id="fileTree" class="tree" aria-label="Project files"></nav>
       <footer class="repo-foot"><span>HEAD</span><span>4f2c9a1</span><span>CHAIN-NATIVE COMPUTER</span></footer>
     </section>
 
     <section class="notes">
       <div class="label"><span>01</span> A NOTE FROM THE BUILDER</div>
-      <p class="lead">I am building a new kind of computer system on top of Robinhood Chain—one where applications, agents, storage, compute, licenses, and other parts of the system can be owned, exchanged, and recombined by the people who use them.</p>
+      <p class="lead">I am building a new kind of computer system on top of Solana—one where applications, agents, storage, compute, licenses, and other parts of the system can be owned, exchanged, and recombined by the people who use them.</p>
 
       <h3>WHY I STARTED</h3>
       <p>Computers are called personal, but most of their important relationships are no longer personal. Our applications depend on company accounts. Our purchases can become inaccessible. Our files are pushed into services we do not control. A useful tool can disappear because a platform changes its rules, shuts down, or decides that our device is too old.</p>
@@ -50,19 +50,19 @@
 
       <div class="label project"><span>02</span> WHAT THE PROJECT IS</div>
       <h2>A local-first computer system with an economy built into its architecture.</h2>
-      <p>The project has three connected layers. The first is a familiar computer interface where people open files, use tools and manage their work. The second is a secure runtime that isolates components and controls what each one is allowed to access. The third is Robinhood Chain, which records ownership, licenses, payments and the history of published components.</p>
-      <p>The computer does not run “inside” the blockchain. Code execution, private files and everyday interaction stay on the user's device whenever possible. Robinhood Chain sits underneath the experience as the shared ownership and settlement layer.</p>
+      <p>The project has three connected layers. The first is a familiar computer interface where people open files, use tools and manage their work. The second is a secure runtime that isolates components and controls what each one is allowed to access. The third is Solana, which records ownership, licenses, payments and the history of published components.</p>
+      <p>The computer does not run “inside” the blockchain. Code execution, private files and everyday interaction stay on the user's device whenever possible. Solana sits underneath the experience as the shared ownership and settlement layer.</p>
 
-      <h3>WHY ROBINHOOD CHAIN</h3>
-      <p>Robinhood Chain is an open, EVM-compatible network designed around programmable assets and financial activity. That makes it possible to build contracts for component registration, licenses, rentals, royalties and payments using familiar Ethereum tools.</p>
-      <p>The connection also makes conceptual sense to me. Robinhood began with the idea of opening financial access. This project asks whether that direction can be extended from financial assets to the digital tools people use every day. Shellwork is an independent experiment built on the network; it is not an official Robinhood product.</p>
+      <h3>WHY SOLANA</h3>
+      <p>Solana programs store component records, listings and time-limited licenses in program-derived accounts. Purchases settle in SOL while the local runtime keeps code and private files on the user device.</p>
+      <p>Shellwork uses Solana for shared ownership and settlement. The browser connects to a Solana wallet, and the runtime checks account state and the component code hash before loading software.</p>
 
       <h3>HOW A COMPONENT ENTERS THE SYSTEM</h3>
       <ol>
         <li>A developer publishes a component and a cryptographic fingerprint of its code.</li>
         <li>The developer defines its price, license rules, update policy and required permissions.</li>
         <li>A user buys, rents or receives the right to use that component.</li>
-        <li>The local system verifies the license and code fingerprint through Robinhood Chain.</li>
+        <li>The local system verifies the license and code fingerprint through Solana.</li>
         <li>The runtime loads the component inside a restricted environment.</li>
         <li>Payment and royalties are settled automatically according to the published rules.</li>
       </ol>
@@ -88,8 +88,8 @@
       <p>Eventually, Shellwork could become a shared protocol rather than one company's operating system: many interfaces, many runtimes and many marketplaces using the same open component standard. Users could leave one implementation and carry their legitimate software rights into another.</p>
 
       <h3>WHERE THE PROJECT IS TODAY</h3>
-      <p>This is an early architecture project. The repository currently demonstrates the core model: a capability-based kernel, a component registry, a license market and a local runtime. It is not yet a finished operating system, and the example contracts have not been presented as production-ready financial infrastructure.</p>
-      <p>The next serious work is to define the component standard, threat model, permission language and recovery model; connect the contracts to Robinhood Chain testnet; and build a small local runtime that can install and safely launch one real component from beginning to end.</p>
+      <p>This is an early architecture project. The repository currently demonstrates the core model: a capability-based kernel, a component registry, a license market and a local runtime. It is not yet a finished operating system, and the Solana program has not been presented as production-ready financial infrastructure.</p>
+      <p>The next serious work is to define the component standard, threat model, permission language and recovery model; deploy and test the Shellwork program on Solana devnet; and build a small local runtime that can install and safely launch one real component from beginning to end.</p>
 
       <h3>THE QUESTIONS I AM NOT HIDING</h3>
       <p>How should licenses survive forks? Which rights should never be transferable? How can account recovery work without rebuilding centralized custody? How do we stop speculation from overwhelming usefulness? What is the simplest permission language a non-technical user can genuinely understand?</p>
@@ -112,7 +112,7 @@
     </header>
     <div class="toolbar"><span id="languageLabel">JAVASCRIPT</span><span id="lineCount">— LINES</span><span>UTF-8</span><span>LF</span></div>
     <div class="code-scroll" id="codeScroll"><pre id="codeView"><code>Loading source…</code></pre></div>
-    <footer class="work-foot"><span>Shellwork Runtime V1</span><span id="loadState">READING OBJECT</span></footer>
+    <footer class="work-foot"><span>Shellwork Runtime V2</span><span id="loadState">READING OBJECT</span></footer>
   </main>
 </div>
 <script src="./repository.js"></script>

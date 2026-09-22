@@ -1,9 +1,9 @@
 export { CapabilityKernel } from "./kernel.js";
-export { ChainLicenseProvider, MemoryLicenseProvider, componentId }
-  from "./license-providers.js";
+export { ChainLicenseProvider, MemoryLicenseProvider, componentId } from "./license-providers.js";
 export { validateManifest } from "./manifest.js";
 export { PERMISSIONS } from "./permissions.js";
-export { robinhoodMainnet, robinhoodTestnet } from "./networks.js";
+export { solanaDevnet, solanaMainnet, createConnection } from "./networks.js";
+export { DEFAULT_PROGRAM_ID, pda, decodeComponent, decodeListing, decodeLicense } from "./solana-codec.js";
 export { WasmLoader } from "./wasm-loader.js";
 export { MarketClient } from "./market-client.js";
 export { ArtifactFetcher } from "./artifact-fetcher.js";

@@ -1,59 +1,30 @@
-# Shellwork
+# Shellwork Solana implementation
 
-Version 1.1 is a working reference implementation of a local-first computer
-runtime whose component ownership and licensing can be settled on Robinhood
-Chain.
+Shellwork separates local software execution from Solana ownership and settlement. The Anchor program stores component code hashes, publishers, SOL-denominated listings and time-limited licenses in deterministic program-derived accounts. The browser uses a Solana wallet to sign purchases. The local runtime verifies artifacts before executing WebAssembly.
 
-This is an independent open-source experiment. It is not an official Robinhood
-product.
+## Local verification
 
-## What V1 does
+```sh
+npm ci
+npm run verify
+npm run demo
+```
 
-- Registers versioned software components and their code hashes onchain.
-- Lets a publisher create fixed-price, time-limited license offers.
-- Lets a user acquire or transfer an eligible component license.
-- Uses pull payments so publishers withdraw revenue safely.
-- Validates manifests, permission declarations and component bytes locally.
-- Loads verified WebAssembly components inside a deliberately small host API.
-- Supports an in-memory development provider and a real EVM read provider.
-- Includes contract compilation, runtime tests and an end-to-end local demo.
-- Includes a browser system interface with a component market, installed
-  components, activity history, wallet connection and chain configuration.
+The generated browser interface is in the repository root at `/system/`. Serve the repository root with an HTTP server. It starts in Local Demo mode. A configured Program ID activates Solana purchase and access checks against the selected RPC endpoint.
 
-## Architecture
+## Program workflow
 
-The local runtime executes software and protects private data. Robinhood Chain
-stores shared facts: who published a component, its current code hash, who has
-access, when that access expires, and how payments should be distributed.
+Use Solana CLI and Anchor 0.32.1 from Linux, macOS or Windows WSL:
 
-Large binaries and private files do not belong onchain. A component artifact can
-live on ordinary hosting or content-addressed storage. Its SHA-256 digest is
-recorded in the manifest and registry so the runtime can reject modified bytes.
+```sh
+anchor build
+anchor test
+solana config set --url devnet
+anchor deploy
+```
 
-## Quick start
+The program address must match `Anchor.toml`, `programs/shellwork/src/lib.rs` and `src/solana-codec.js`. The program deployment keypair is kept under ignored `target/deploy/`; never commit it. Deployment requires a funded Solana wallet. Initialize the configuration account once after deployment, then publish components and create listings with `MarketClient`.
 
-Requires Node.js 22 or newer.
+## Security model
 
-    npm install
-    npm run verify
-    npm run demo
-
-After building, open /system/ from the repository interface. The browser starts
-in clearly labeled Local Demo mode. Add deployed registry and market addresses
-under Chain Settings to enable wallet-backed testnet or mainnet purchases.
-
-The demo builds a tiny WebAssembly component, registers a development license,
-verifies its hash and manifest, and executes it through the capability kernel.
-
-## Robinhood Chain
-
-Mainnet uses chain ID 4663. Testnet uses chain ID 46630. V1 defaults to testnet
-for deployment scripts. Set RPC_URL, PRIVATE_KEY and REGISTRY_ADDRESS in your
-environment; never place a private key in this repository.
-
-## Security boundary
-
-V1 only loads WebAssembly and gives it explicitly constructed imports. License
-ownership does not grant access to personal files, identity secrets or wallet
-signing. Production use still requires independent contract audits, runtime
-sandbox review and a complete recovery design.
+Program-derived accounts constrain who can publish, list and transfer a license. The purchase instruction checks the live listing and component accounts and settles SOL atomically. The local kernel checks licenses, artifact SHA-256 hashes and declared capabilities before execution. This reference implementation requires independent review before production funds are used.

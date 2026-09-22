@@ -1,42 +1,34 @@
 # Shellwork
 
-Shellwork is an open-source experiment in building a computer system whose software components can be owned, licensed, transferred and settled through Robinhood Chain.
+Shellwork is a local-first component runtime with a Solana program for publishing code hashes, listing software licenses, receiving SOL payments, and recording access expiry.
 
-The computer itself remains local-first: code executes on the user's device, while the chain records shared facts such as component publishers, code hashes, licenses, access expiry and payments. Shellwork is independent and is not an official Robinhood product.
+## Project layout
 
-## Explore the project
-
-- [Project website and source browser](https://nockwork.xyz/)
-- [Open the Shellwork system](https://nockwork.xyz/system/)
-- [Developer documentation](repository-files/README.md)
-
-## V1.1 includes
-
-- Solidity registries for versioned components and fixed-price licenses
-- A local JavaScript runtime with manifest, hash and permission verification
-- A constrained WebAssembly capability kernel
-- Robinhood Chain mainnet and testnet configuration
-- An in-memory development provider and EVM read provider
-- A browser system for discovering, installing and running components
-- Contract compilation, runtime tests and an end-to-end local demo
+- `repository-files/programs/shellwork/src/lib.rs`: Solana program written with Anchor
+- `repository-files/src/`: JavaScript client, license checks, artifact verification and WebAssembly runtime
+- `repository-files/app/`: browser system source
+- `system/`: generated browser application
 
 ## Run locally
 
-Requires Node.js 22 or newer.
+Requires Node.js 22 or newer. From `repository-files/`:
 
-```bash
-cd repository-files
-npm install
+```sh
+npm ci
 npm run verify
 npm run demo
 ```
 
-The generated browser application is written to `system/`. Serve the repository root with any static HTTP server, then open `/system/`.
+Serve the repository root over HTTP and open `/system/`. The browser starts in Local Demo mode. In Chain Settings, choose Solana Devnet or Mainnet and enter a deployed Shellwork Program ID to enable onchain purchases. Catalog entries in Local Demo are samples; real purchases require matching published components and listings on the chosen network.
 
-## Current status
+## Build the Solana program
 
-V1.1 is a working reference implementation, not a production-ready operating system. Before real-value deployment, the contracts and runtime sandbox require independent security audits, stronger recovery design and adversarial testing.
+Install Rust, Solana CLI and Anchor 0.32.1 in a Linux, macOS or WSL environment. From `repository-files/` run `anchor build` and `anchor test`. The program ID in `Anchor.toml`, `programs/shellwork/src/lib.rs` and the JavaScript default must match the generated deployment keypair. Keep deployment keys in the ignored `repository-files/target/` directory.
 
-## License
+The program uses program-derived accounts for configuration, components, listings and licenses. Paid listings use lamports; purchase renews a time-limited license and transfers SOL to the publisher and protocol treasury in one transaction. The local runtime verifies component bytes and declared permissions before running WebAssembly.
 
-[MIT](LICENSE)
+## Status
+
+This is a reference implementation. Audit the onchain program and runtime before handling real-value payments.
+
+[MIT License](LICENSE)

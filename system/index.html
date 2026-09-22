@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Shellwork V1 local system interface">
-  <title>Shellwork V1</title>
+  <meta name="description" content="Shellwork V2 local system interface">
+  <title>Shellwork V2</title>
   <link rel="icon" type="image/png" href="../shellwork-logo.png">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=shellwork-logo-2">
 </head>
 <body>
   <div class="computer">
     <header class="topbar">
-      <a class="system-name" href="../">SHELLWORK <b>V1</b></a>
+      <a class="system-name" href="../">SHELLWORK <b>V2</b></a>
       <div class="chain-state"><i></i><span id="modeText">LOCAL DEMO</span></div>
       <div id="clock">00:00</div>
       <button id="walletButton" class="wallet">CONNECT WALLET</button>
@@ -57,12 +57,12 @@
       </section>
 
       <section class="view" id="settingsView">
-        <div class="view-head"><div><small>ROBINHOOD CHAIN</small><h1>Connection settings.</h1></div></div>
+        <div class="view-head"><div><small>SOLANA</small><h1>Connection settings.</h1></div></div>
         <form id="settingsForm" class="settings-form">
-          <label>NETWORK<select id="networkInput"><option value="testnet">Robinhood Chain Testnet · 46630</option><option value="mainnet">Robinhood Chain · 4663</option></select></label>
-          <label>COMPONENT REGISTRY<input id="registryInput" placeholder="0x…"></label>
-          <label>LICENSE MARKET<input id="marketInput" placeholder="0x…"></label>
-          <p>Leave contract addresses empty to use the safe local demonstration. Never enter a private key here. Wallet signatures happen inside your wallet.</p>
+          <label>NETWORK<select id="networkInput"><option value="devnet">Solana Devnet</option><option value="mainnet">Solana Mainnet</option></select></label>
+          <label>PROGRAM ID<input id="programInput" placeholder="Solana program address"></label>
+          <label>RPC URL (OPTIONAL)<input id="rpcInput" placeholder="https://api.devnet.solana.com"></label>
+          <p>Leave Program ID empty for Local Demo. Paid Solana purchases require a deployed Shellwork program and published listings. Wallet signatures stay inside your wallet.</p>
           <button type="submit">SAVE CONFIGURATION</button>
         </form>
       </section>

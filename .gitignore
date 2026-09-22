@@ -3,3 +3,4 @@ repository-files/dist/
 *.log
 .DS_Store
 Thumbs.db
+repository-files/target/
