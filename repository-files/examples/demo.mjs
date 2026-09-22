@@ -1,7 +1,7 @@
 import { sha256 } from "../src/hash.js";
 import { CapabilityKernel, MemoryLicenseProvider } from "../src/index.js";
 
-const owner = "11111111111111111111111111111111";
+const owner = "0x0000000000000000000000000000000000000001";
 
 // A valid WebAssembly module exporting run(a, b), which returns a + b.
 const componentBytes = Uint8Array.from([

@@ -1,6 +1,0 @@
-[workspace]
-members = ["programs/shellwork"]
-resolver = "2"
-
-[profile.release]
-overflow-checks = true

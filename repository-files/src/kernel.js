@@ -20,7 +20,7 @@ export class CapabilityKernel {
       throw new Error("Component integrity check failed");
     }
 
-    const licensed = await this.licenseProvider.hasAccess(this.owner, manifest.id, manifest.codeHash);
+    const licensed = await this.licenseProvider.hasAccess(this.owner, manifest.id);
     if (!licensed) throw new Error("No active license for " + manifest.id);
 
     const loaded = await this.loader.load(bytes, manifest.permissions);

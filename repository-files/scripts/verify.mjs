@@ -12,4 +12,4 @@ const build = spawnSync(process.execPath, ["scripts/build.mjs"], {
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
-console.log("V2 verification passed.");
+console.log("V1 verification passed.");

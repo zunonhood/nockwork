@@ -5,7 +5,7 @@ import { CapabilityKernel } from "../src/kernel.js";
 import { MemoryLicenseProvider } from "../src/license-providers.js";
 import { validateManifest } from "../src/manifest.js";
 
-const owner = "11111111111111111111111111111111";
+const owner = "0x0000000000000000000000000000000000000001";
 const addModule = Uint8Array.from([
   0,97,115,109,1,0,0,0,1,7,1,96,2,127,127,1,127,
   3,2,1,0,7,7,1,3,114,117,110,0,0,

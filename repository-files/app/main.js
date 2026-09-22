@@ -1,49 +1,54 @@
-import { PublicKey } from "@solana/web3.js";
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  getAddress,
+  http,
+  parseEther
+} from "viem";
 import { MarketClient } from "../src/market-client.js";
-import { ChainLicenseProvider } from "../src/license-providers.js";
-import { createConnection, solanaDevnet, solanaMainnet } from "../src/networks.js";
+import { robinhoodMainnet, robinhoodTestnet } from "../src/networks.js";
 
-let walletProvider = null;
 const catalog = [
   {
     id:"creative/pixel-forge",listingId:0,name:"Pixel Forge",icon:"PF",
-    category:"Creative",price:"0.004 SOL",lamports:4_000_000n,term:"30 DAYS",
-    developer:"LOCAL SAMPLE",
+    category:"Creative",price:"0.004 ETH",wei:parseEther("0.004"),term:"30 DAYS",
+    developer:"0x7A3F…91C2",
     description:"A local image workspace with non-destructive layers and export tools.",
     permissions:["storage:read","storage:write"]
   },
   {
     id:"agents/research-node",listingId:1,name:"Research Node",icon:"RN",
-    category:"Agents",price:"0.002 SOL",lamports:2_000_000n,term:"7 DAYS",
-    developer:"LOCAL SAMPLE",
+    category:"Agents",price:"0.002 ETH",wei:parseEther("0.002"),term:"7 DAYS",
+    developer:"0x19B4…A08E",
     description:"A source-first research agent that produces traceable working notes.",
     permissions:["network:fetch","storage:write"]
   },
   {
     id:"compute/render-grid",listingId:2,name:"Render Grid",icon:"RG",
-    category:"Compute",price:"0.006 SOL",lamports:6_000_000n,term:"24 HOURS",
-    developer:"LOCAL SAMPLE",
+    category:"Compute",price:"0.006 ETH",wei:parseEther("0.006"),term:"24 HOURS",
+    developer:"0xE620…4F12",
     description:"A metered pool of remote rendering capacity for short production jobs.",
     permissions:["network:fetch"]
   },
   {
     id:"storage/quiet-vault",listingId:3,name:"Quiet Vault",icon:"QV",
-    category:"Storage",price:"0.003 SOL",lamports:3_000_000n,term:"30 DAYS",
-    developer:"LOCAL SAMPLE",
+    category:"Storage",price:"0.003 ETH",wei:parseEther("0.003"),term:"30 DAYS",
+    developer:"0x82D1…77AB",
     description:"Encrypted, content-addressed storage controlled by the owner's key.",
     permissions:["storage:read","storage:write","network:fetch"]
   },
   {
     id:"system/mono-shell",listingId:4,name:"Mono Shell",icon:"MS",
-    category:"Interface",price:"FREE",lamports:0n,term:"PERPETUAL",
-    developer:"LOCAL SAMPLE",
+    category:"Interface",price:"FREE",wei:0n,term:"PERPETUAL",
+    developer:"0x41C0…3B99",
     description:"A restrained keyboard-first shell for the Shellwork environment.",
     permissions:["storage:read"]
   },
   {
     id:"tools/ledger-sheet",listingId:5,name:"Ledger Sheet",icon:"LS",
-    category:"Productivity",price:"0.001 SOL",lamports:1_000_000n,term:"90 DAYS",
-    developer:"LOCAL SAMPLE",
+    category:"Productivity",price:"0.001 ETH",wei:parseEther("0.001"),term:"90 DAYS",
+    developer:"0xB506…D440",
     description:"A programmable local spreadsheet with verifiable calculation modules.",
     permissions:["storage:read","storage:write"]
   }
@@ -93,7 +98,7 @@ function renderCatalog(){
       '<div class="card-top"><span class="card-icon">'+item.icon+'</span><span class="card-category">'+item.category.toUpperCase()+'</span></div>'+
       '<h2>'+escapeHtml(item.name)+'</h2><p>'+escapeHtml(item.description)+'</p>'+
       '<div class="card-foot"><div class="price"><strong>'+item.price+'</strong><small>'+item.term+'</small></div>'+
-      '<button data-buy="'+item.id+'">'+(installed?"INSTALLED":item.lamports===0n?"INSTALL":"ACQUIRE")+'</button></div></article>';
+      '<button data-buy="'+item.id+'">'+(installed?"INSTALLED":item.wei===0n?"INSTALL":"ACQUIRE")+'</button></div></article>';
   }).join("")||'<div class="empty-list">No components match this search.</div>';
   $("#catalog").querySelectorAll(".card").forEach(card=>{
     card.onclick=event=>{
@@ -117,7 +122,7 @@ function renderInspector(){
     '<div><span>PRICE</span><b>'+item.price+'</b></div><div><span>DURATION</span><b>'+item.term+'</b></div>'+
     '<div><span>STATUS</span><b>'+(installed?"INSTALLED":"AVAILABLE")+'</b></div></div></div>'+
     '<div class="inspect-actions"><button class="action primary" id="inspectAcquire">'+
-    (installed?"LAUNCH COMPONENT":item.lamports===0n?"INSTALL LOCALLY":"ACQUIRE LICENSE")+
+    (installed?"LAUNCH COMPONENT":item.wei===0n?"INSTALL LOCALLY":"ACQUIRE LICENSE")+
     '</button><button class="action" id="inspectSource">VIEW COMPONENT ID</button></div>';
   $("#inspectAcquire").onclick=()=>installed?launch(item):acquire(item);
   $("#inspectSource").onclick=()=>setStatus(item.id);
@@ -141,64 +146,52 @@ function setStatus(message){
 }
 
 function chain(){
-  return state.config.network==="mainnet"?solanaMainnet:solanaDevnet;
+  return state.config.network==="mainnet"?robinhoodMainnet:robinhoodTestnet;
 }
 
 function chainConfigured(){
-  return Boolean(state.config.programId);
-}
-
-function connection(){
-  return createConnection(chain(),state.config.rpcUrl||chain().rpcUrl);
+  return Boolean(state.config.registryAddress&&state.config.marketAddress);
 }
 
 async function acquire(item){
-  setStatus("Preparing "+item.name+"...");
+  if(state.installed.includes(item.id)){launch(item);return}
+  setStatus("Preparing "+item.name+"…");
   try{
-  if(state.installed.includes(item.id)){
-    if(!chainConfigured()||item.lamports===0n){await launch(item);return}
-    if(state.account){
-      const licenses=new ChainLicenseProvider({
-        programId:state.config.programId,connection:connection()
-      });
-      if(await licenses.hasAccess(state.account,item.id)){await launch(item);return}
-    }
-  }
-    if(item.lamports>0n&&chainConfigured()){
+    if(item.wei>0n&&chainConfigured()){
       if(!state.account)await connectWallet();
-      if(!state.account)throw new Error("Connect a Solana wallet first");
-      const market=new MarketClient({
-        wallet:walletProvider,connection:connection(),programId:state.config.programId
+      if(!state.account)throw new Error("Wallet connection was not approved");
+      const activeChain=chain();
+      const transport=custom(window.ethereum);
+      const walletClient=createWalletClient({
+        account:state.account,chain:activeChain,transport
       });
-      await market.purchase(item.id,item.lamports);
-      addActivity("LICENSE ACQUIRED",item,"SOLANA");
+      const publicClient=createPublicClient({
+        chain:activeChain,transport:http(activeChain.rpcUrls.default.http[0])
+      });
+      const market=new MarketClient({
+        walletClient,publicClient,
+        registryAddress:state.config.registryAddress,
+        marketAddress:state.config.marketAddress
+      });
+      const receipt=await market.purchase(item.listingId);
+      if(receipt.status!=="success")throw new Error("Transaction was not successful");
+      addActivity("LICENSE ACQUIRED",item,"ONCHAIN");
     }else{
       await new Promise(resolve=>setTimeout(resolve,450));
-      addActivity(item.lamports===0n?"COMPONENT INSTALLED":"DEMO LICENSE",item,"LOCAL");
+      addActivity(item.wei===0n?"COMPONENT INSTALLED":"DEMO LICENSE",item,"LOCAL");
     }
-    if(!state.installed.includes(item.id))state.installed.push(item.id);save();
-    setStatus(item.name+" installed in this local profile");
+    state.installed.push(item.id);save();
+    setStatus(item.name+" installed and verified");
     renderCatalog();renderInspector();renderInstalled();
   }catch(error){
-    setStatus(error.message);
+    setStatus(error.shortMessage??error.message);
     addActivity("INSTALL FAILED",item,"ERROR");
   }
 }
 
-async function launch(item){
-  try{
-    if(item.lamports>0n&&chainConfigured()){
-      if(!state.account)throw new Error("Connect a Solana wallet first");
-      const licenses=new ChainLicenseProvider({
-        programId:state.config.programId,connection:connection()
-      });
-      if(!await licenses.hasAccess(state.account,item.id)){
-        throw new Error("No active Solana license for this component");
-      }
-    }
-    setStatus(item.name+" launch handed to the local capability runtime");
-    addActivity("COMPONENT LAUNCHED",item,"LOCAL");
-  }catch(error){setStatus(error.message)}
+function launch(item){
+  setStatus(item.name+" launch handed to the local capability runtime");
+  addActivity("COMPONENT LAUNCHED",item,"LOCAL");
 }
 
 function uninstall(item){
@@ -233,26 +226,45 @@ function renderActivity(){
   ).join("")||'<div class="empty-list">Activity will appear here after a component is installed or launched.</div>';
 }
 
+async function ensureNetwork(activeChain){
+  const hex="0x"+activeChain.id.toString(16);
+  try{
+    await window.ethereum.request({
+      method:"wallet_switchEthereumChain",params:[{chainId:hex}]
+    });
+  }catch(error){
+    if(error.code!==4902)throw error;
+    await window.ethereum.request({
+      method:"wallet_addEthereumChain",
+      params:[{
+        chainId:hex,chainName:activeChain.name,
+        nativeCurrency:activeChain.nativeCurrency,
+        rpcUrls:activeChain.rpcUrls.default.http,
+        blockExplorerUrls:[activeChain.blockExplorers.default.url]
+      }]
+    });
+  }
+}
+
 async function connectWallet(){
-  const provider=window.phantom?.solana??window.solflare??window.solana;
-  if(!provider?.connect||!provider?.signTransaction){
-    setStatus("Install a Solana wallet that supports signTransaction");
+  if(!window.ethereum){
+    setStatus("No EVM browser wallet detected");
     return;
   }
   try{
-    const response=await provider.connect();
-    walletProvider=provider;
-    state.account=(response.publicKey??provider.publicKey).toBase58();
-    $("#identityText").textContent=state.account.slice(0,6)+"..."+state.account.slice(-4);
+    const accounts=await window.ethereum.request({method:"eth_requestAccounts"});
+    await ensureNetwork(chain());
+    state.account=getAddress(accounts[0]);
+    $("#identityText").textContent=state.account.slice(0,6)+"…"+state.account.slice(-4);
     $("#walletButton").textContent="CONNECTED";
     addActivity("WALLET CONNECTED",{name:chain().name},"READY");
     updateMode();
-  }catch(error){setStatus(error.message)}
+  }catch(error){setStatus(error.shortMessage??error.message)}
 }
 
 function updateMode(){
   const live=chainConfigured();
-  $("#modeText").textContent=live?(chain().cluster==="devnet"?"DEVNET MODE":"MAINNET MODE"):"LOCAL DEMO";
+  $("#modeText").textContent=live?(chain().testnet?"TESTNET MODE":"MAINNET MODE"):"LOCAL DEMO";
   document.querySelector(".system-health p:last-child").classList.toggle("muted",!live);
 }
 
@@ -267,28 +279,27 @@ function openView(name){
 }
 
 function loadSettings(){
-  $("#networkInput").value=state.config.network==="mainnet"?"mainnet":"devnet";
-  $("#programInput").value=state.config.programId??"";
-  $("#rpcInput").value=state.config.rpcUrl??"";
+  $("#networkInput").value=state.config.network??"testnet";
+  $("#registryInput").value=state.config.registryAddress??"";
+  $("#marketInput").value=state.config.marketAddress??"";
 }
 
 $("#settingsForm").onsubmit=event=>{
   event.preventDefault();
   try{
-    const programId=$("#programInput").value.trim();
-    const rpcUrl=$("#rpcInput").value.trim();
-    if(programId)new PublicKey(programId);
-    if(rpcUrl&&!/^https:\/\//.test(rpcUrl)&&!/^http:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(rpcUrl)){
-      throw new Error("RPC URL must use HTTPS or local HTTP");
+    const registry=$("#registryInput").value.trim();
+    const market=$("#marketInput").value.trim();
+    if(Boolean(registry)!==Boolean(market)){
+      throw new Error("Enter both contract addresses or leave both empty");
     }
     state.config={
       network:$("#networkInput").value,
-      programId,
-      rpcUrl
+      registryAddress:registry?getAddress(registry):"",
+      marketAddress:market?getAddress(market):""
     };
     localStorage.setItem("shellwork-config",JSON.stringify(state.config));
     loadSettings();updateMode();
-    setStatus(chainConfigured()?"Solana program configured":"Local demo mode enabled");
+    setStatus(chainConfigured()?"Chain configuration saved":"Local demo mode enabled");
   }catch(error){setStatus(error.message)}
 };
 
@@ -301,6 +312,16 @@ $("#searchInput").oninput=event=>{state.search=event.target.value;renderCatalog(
 function tick(){
   $("#clock").textContent=new Date().toLocaleTimeString([],{
     hour:"2-digit",minute:"2-digit"
+  });
+}
+
+if(window.ethereum?.on){
+  window.ethereum.on("accountsChanged",accounts=>{
+    state.account=accounts[0]?getAddress(accounts[0]):null;
+    $("#identityText").textContent=state.account
+      ?state.account.slice(0,6)+"…"+state.account.slice(-4)
+      :"LOCAL USER";
+    $("#walletButton").textContent=state.account?"CONNECTED":"CONNECT WALLET";
   });
 }
 
